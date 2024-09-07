@@ -62,7 +62,7 @@ export async function createInvite(app: FastifyInstance) {
           )
         }
 
-        const ivniteWithSameEmail = await prisma.invite.findUnique({
+        const inviteWithSameEmail = await prisma.invite.findUnique({
           where: {
             email_organizationId: {
               email,
@@ -71,7 +71,7 @@ export async function createInvite(app: FastifyInstance) {
           },
         })
 
-        if (ivniteWithSameEmail) {
+        if (inviteWithSameEmail) {
           throw new BadRequestError(
             'Another invite with same e-mail already exists.',
           )
