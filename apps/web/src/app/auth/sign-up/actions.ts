@@ -1,16 +1,60 @@
 'use server'
 
-import { redirect } from 'next/navigation'
+import { HTTPError } from 'ky'
+import { z } from 'zod'
 
-export async function signInWithGithub() {
-  const githubSignInUrl = new URL('login/oauth/authorize', 'https://github.com')
+import { signUp } from '@/http/sign-up'
 
-  githubSignInUrl.searchParams.set('client_id', 'Ov23liEHT0kRckHUzyii')
-  githubSignInUrl.searchParams.set(
-    'redirect_uri',
-    'http://localhost:3000/api/auth/callback',
-  )
-  githubSignInUrl.searchParams.set('scope', 'user')
+const signUpSchema = z
+  .object({
+    name: z.string().refine((value) => value.split(' ').length > 1, {
+      message: 'Please, enter your full name',
+    }),
+    email: z
+      .string()
+      .email({ message: 'Please, provide a valid e-mail address.' }),
+    password: z
+      .string()
+      .min(1, { message: 'Password should have at least 6 characters.' }),
+    password_confirmation: z.string(),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: 'Password confirmation does not match.',
+    path: ['password_confirmation'],
+  })
 
-  redirect(githubSignInUrl.toString())
+export async function signUpAction(data: FormData) {
+  const result = signUpSchema.safeParse(Object.fromEntries(data))
+
+  if (!result.success) {
+    const errors = result.error.flatten().fieldErrors
+
+    return { success: false, message: null, errors }
+  }
+
+  const { name, email, password } = result.data
+
+  try {
+    await signUp({
+      name,
+      email,
+      password,
+    })
+  } catch (err) {
+    if (err instanceof HTTPError) {
+      const { message } = await err.response.json()
+
+      return { success: false, message, errors: null }
+    }
+
+    console.error(err)
+
+    return {
+      success: false,
+      message: 'Unexpected error, try again in a few minutes.',
+      errors: null,
+    }
+  }
+
+  return { success: true, message: null, errors: null }
 }
