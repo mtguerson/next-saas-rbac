@@ -30,7 +30,7 @@ export async function ProfileButton() {
           <span className="text-sm font-medium">{user.name}</span>
           <span className="text-xs text-muted-foreground">{user.email}</span>
         </div>
-        <Avatar>
+        <Avatar className="size-9">
           {user.avatarUrl && <AvatarImage src={user.avatarUrl} />}
           {user.name && (
             <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
