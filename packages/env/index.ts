@@ -18,7 +18,7 @@ export const env = createEnv({
   },
   runtimeEnv: {
     PORT: process.env.SERVER_PORT,
-    DATABASE_URL: process.env.PORT,
+    DATABASE_URL: process.env.DATABASE_URL,
     JWT_SECRET: process.env.JWT_SECRET,
     GITHUB_OAUTH_CLIENT_ID: process.env.GITHUB_OAUTH_CLIENT_ID,
     GITHUB_OAUTH_CLIENT_SECRET: process.env.GITHUB_OAUTH_CLIENT_SECRET,
