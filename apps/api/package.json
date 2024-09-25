@@ -6,7 +6,7 @@
     "db:migrate": "pnpm env:load prisma migrate dev",
     "db:studio": "pnpm env:load prisma studio",
     "env:load": "dotenv -e ../../.env --",
-    "build": "tsc",
+    "build": "tsup",
     "start": "node dist/http/server.js"
   },
   "dependencies": {
